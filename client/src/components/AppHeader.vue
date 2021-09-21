@@ -45,7 +45,7 @@
       </div>
 
       <!-- Before Login -->
-      <ul class="before-login font-14 fw-300 text-uppercase">
+      <ul class="before-login font-14 fw-300 text-uppercase" v-if="!isLoggedIn">
         <li>
           <!--          <a href="#">Sign up</a>-->
           <router-link to="/register">Sign Up</router-link>
@@ -58,7 +58,7 @@
       <!-- End Before Login -->
 
       <!-- After Login -->
-      <ul class="author-page white-path d-none">
+      <ul class="author-page white-path" v-else>
         <!-- Profile Dropdown -->
         <li class="dropdown">
           <a
@@ -124,8 +124,17 @@
 </template>
 
 <script>
+import User from "../Helpers/User";
+
 export default {
-  name: "AppHeader"
+  data: () => ({
+    isLoggedIn: false
+  }),
+  created() {
+    if (User.loggedIn()) {
+      this.isLoggedIn = true;
+    }
+  }
 }
 </script>
 

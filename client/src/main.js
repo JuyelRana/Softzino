@@ -1,10 +1,12 @@
 import {createApp} from 'vue'
 import App from './App.vue'
 import router from "./router";
+import User from "./Helpers/User";
 
 import axios from 'axios'
 
-window.axios = axios
+window.axios = axios;
+window.User = User;
 axios.defaults.baseURL = 'http://localhost/softzino/api/api';
 // axios.defaults.headers = {
 //     'Access-Control-Allow-Origin':"*",

@@ -56,11 +56,16 @@ class UserController extends Controller
 
     /**
      * @param User $user
-     * @return UserResource
+     * @return \Illuminate\Http\JsonResponse
      */
     public function show(User $user)
     {
-        return new UserResource($user);
+        return response()->json(APIHelpers::createAPIResponse(
+            false,
+            Response::HTTP_OK,
+            'User Found',
+            new UserResource($user)
+        ), Response::HTTP_OK);
     }
 
     /**

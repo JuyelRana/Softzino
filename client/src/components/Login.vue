@@ -5,7 +5,9 @@
       <h1 class="text-uppercase fw-500 mb-4 text-center font-22">
         Login
       </h1>
-      <form class="auth-form" @submit.prevent="login">
+      <form class="auth-form" @submit.prevent="login" @keydown="form.onKeydown($event)">
+        <AlertError :form="form"/>
+        <AlertSuccess :form="form" v-if="success" message="Login success"/>
         <div class="form-group">
           <input
               v-model="form.email"
@@ -14,6 +16,7 @@
               class="form-control form-control-lg font-14 fw-300"
               placeholder="Email"/>
 
+          <HasError :form="form" field="email"/>
 
         </div>
         <div class="form-group">
@@ -24,7 +27,7 @@
               name="password"
               class="form-control form-control-lg font-14 fw-300"
               placeholder="Password"/>
-
+          <HasError :form="form" field="password"/>
 
         </div>
         <div class="mt-4 mb-4 clearfix">
@@ -48,28 +51,45 @@
 </template>
 
 <script>
+import Form from 'vform'
+import {AlertError, AlertSuccess, HasError} from 'vform/src/components/bootstrap4';
 
-import axios from "axios";
+import User from "../Helpers/User";
+
 
 export default {
-  name: "Login",
+  components: {
+    HasError, AlertError, AlertSuccess
+  },
   data: () => ({
-    form: {
+    form: new Form({
       email: '',
-      password: ''
-    }
+      password: '',
+    }),
+    success: false
   }),
+
+  created() {
+    if (User.loggedIn()) {
+      window.location = '/dashboard'
+    }
+  },
 
   methods: {
     login() {
-      axios.post('/login', this.form)
-          .then((res) => {
-            if (res.status === 200) {
-              console.log(res.data);
+
+      this.form.post('/login')
+          .then(res => {
+            if (!res.data.success) {
+              this.form.errors.set(res.data.errors, res.data.message);
             } else {
-              console.log(res);
+              this.success = res.data.success
+              User.responseAfterLogin(res.data);
             }
-          }).catch(err => err);
+
+          }).catch(err => {
+        console.log(err);
+      });
     }
   }
 }
