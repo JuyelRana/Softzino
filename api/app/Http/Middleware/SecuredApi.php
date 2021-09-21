@@ -24,7 +24,7 @@ class SecuredApi
         $app_key = $request->header('app-key');
         $app_secret = $request->header('app-secret');
 
-
+//
 //        if (!$app_key || !$app_secret) {
 //            return response()->json(['message' => 'Please provide app key and app secret to access the api.'], 500);
 //        }

@@ -10,30 +10,18 @@
           <table class="table table-striped">
             <thead>
             <tr>
-              <th scope="col">#</th>
-              <th scope="col">First</th>
-              <th scope="col">Last</th>
-              <th scope="col">Handle</th>
+              <th scope="col">Sl</th>
+              <th scope="col">Name</th>
+              <th scope="col">Email</th>
+              <th scope="col">Birthdate</th>
             </tr>
             </thead>
             <tbody>
-            <tr>
-              <th scope="row">1</th>
-              <td>Mark</td>
-              <td>Otto</td>
-              <td>@mdo</td>
-            </tr>
-            <tr>
-              <th scope="row">2</th>
-              <td>Jacob</td>
-              <td>Thornton</td>
-              <td>@fat</td>
-            </tr>
-            <tr>
-              <th scope="row">3</th>
-              <td>Larry</td>
-              <td>the Bird</td>
-              <td>@twitter</td>
+            <tr v-for="(user, index) in users" :key="user.id">
+              <th scope="row">{{ ++index }}</th>
+              <td>{{ user.name }}</td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.birthdates.birthdate }}</td>
             </tr>
             </tbody>
           </table>
@@ -48,8 +36,28 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
-  name: "Dashboard"
+  data: () => ({
+    users: []
+  }),
+
+  created() {
+    this.getUsers();
+  },
+  methods: {
+    getUsers() {
+      axios.get('users').then((res) => {
+        if (res.data.success) {
+          this.users = res.data.data;
+        }
+        console.log(res);
+      }).catch(err => {
+        console.log(err);
+      })
+    }
+  }
 }
 </script>
 

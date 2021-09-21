@@ -68,48 +68,47 @@
               role="button"
               data-toggle="dropdown"
               aria-haspopup="true"
-              aria-expanded="false"
-          >
+              aria-expanded="false">
             <img
                 class="user-thumb"
                 src="assets/images/profile.png"
-                alt="Neba Funwi-Gabga"
-            />
+                alt="Neba Funwi-Gabga"/>
+
             <div class="usr-info">
-                                <span class="user-name font-14 fw-500"
-                                >John Doe</span
-                                >
-              <span class="user-deg font-10 fw-300"
-              >Sr. UI Designer</span
-              >
+              <span class="user-name font-14 fw-500">
+                {{ name }}
+              </span>
+              <span class="user-deg font-10 fw-300">
+                Sr. Software Engineer
+              </span>
+
               <span class="down-chevron">
-                                    <i class="fa fa-angle-down"></i>
-                                </span>
+                <i class="fa fa-angle-down"></i>
+              </span>
             </div>
           </a>
+
           <div
               class="dropdown-menu user-dropdown font-14 fw-500"
-              aria-labelledby="userDropdown"
-          >
-            <div class="dropdown-title-group font-12 fw-500">
-                                <span class="dropdown-title text-uppercase"
-                                >Your Account</span
-                                >
+              aria-labelledby="userDropdown">
+
+            <div
+                class="dropdown-title-group font-12 fw-500">
+              <span class="dropdown-title text-uppercase">
+                Your Account
+              </span>
             </div>
-            <a
-                class="dropdown-item mt-28"
-                href="#"
-                title="Profile"
-            >
+
+            <a class="dropdown-item mt-28"
+               href="#"
+               title="Profile">
               <i class="fa fa-user"></i>
               Profile
             </a>
-            <a class="dropdown-item" href="#" title="Setting">
-              <i class="fa fa-cogs"></i>
-              Setting
-            </a>
+
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#" title="Sign Out">
+
+            <a class="dropdown-item" href="#" @click="logOut" title="Sign Out">
               <i class="fa fa-lock"></i>
               Sign Out
             </a>
@@ -128,12 +127,22 @@ import User from "../Helpers/User";
 
 export default {
   data: () => ({
-    isLoggedIn: false
+    isLoggedIn: false,
+    name: null
   }),
+  methods: {
+    logOut() {
+      User.logout();
+    }
+  },
   created() {
     if (User.loggedIn()) {
       this.isLoggedIn = true;
+      this.name = User.username()
     }
+  },
+  mounted() {
+    console.log(this.name);
   }
 }
 </script>
