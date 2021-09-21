@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\APIHelpers;
+use App\Http\Requests\User\SignUpValidation;
 use App\Http\Resources\User\UserResource;
 use App\Repositories\Contracts\User\IUser;
 use App\User;
-use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends Controller
 {
@@ -22,35 +24,34 @@ class UserController extends Controller
     }
 
     /**
-     * Display a listing of the users.
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function index(): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    public function index()
     {
         $users = $this->users->all();
 
-        return UserResource::collection($users);
+        return response()->json(APIHelpers::createAPIResponse(
+            false,
+            Response::HTTP_FOUND,
+            $users->count() . " users found!",
+            UserResource::collection($users)
+        ), Response::HTTP_OK);
     }
 
     /**
-     * @param Request $request
+     * @param SignUpValidation $request
      * @return \Illuminate\Http\JsonResponse
-     * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request)
+    public function store(SignUpValidation $request)
     {
-        $this->validate($request, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ]);
-
         $user = $this->users->create($request->all());
 
-        return response()->json([
-            'message' => 'User Created Successfully',
-            'user' => new UserResource($user)
-        ], 201);
+        return response()->json(APIHelpers::createAPIResponse(
+            false,
+            Response::HTTP_CREATED,
+            "User created successfully",
+            new UserResource($user)
+        ), Response::HTTP_OK);
     }
 
     /**
@@ -63,26 +64,20 @@ class UserController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param SignUpValidation $request
      * @param User $user
      * @return \Illuminate\Http\JsonResponse
-     * @throws \Illuminate\Validation\ValidationException
      */
-    public function update(Request $request, User $user)
+    public function update(SignUpValidation $request, User $user)
     {
-        $this->validate($request, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'birthdate' => ['required']
-        ]);
-
         $user = $this->users->update($user->id, $request->all());
 
-        return response()->json([
-            'message' => 'User updated successfully',
-            'user' => new UserResource($user)
-        ], 200);
+        return response()->json(APIHelpers::createAPIResponse(
+            false,
+            Response::HTTP_CREATED,
+            'User updated successfully',
+            new UserResource($user)
+        ), Response::HTTP_OK);
     }
 
     /**
@@ -93,6 +88,10 @@ class UserController extends Controller
     {
         $this->users->delete($user->id);
 
-        return response()->json(['message' => 'User deleted successfully'], 200);
+        return response()->json(APIHelpers::createAPIResponse(
+            false,
+            Response::HTTP_OK,
+            'User deleted successfully'
+        ), Response::HTTP_OK);
     }
 }

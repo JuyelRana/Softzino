@@ -3,11 +3,15 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\APIHelpers;
+use App\Http\Requests\User\SignUpValidation;
+use App\Http\Resources\User\UserResource;
 use App\Repositories\Contracts\User\IUser;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\Response;
 
 
 class RegisterController extends Controller
@@ -27,19 +31,19 @@ class RegisterController extends Controller
     }
 
     /**
-     * Get a validator for an incoming registration request.
-     *
-     * @param array $data
-     * @return \Illuminate\Contracts\Validation\Validator
+     * @param SignUpValidation $request
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    protected function validator(array $data)
+    public function register(SignUpValidation $request)
     {
-        return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ]);
+        event(new Registered($user = $this->create($request->all())));
+
+        $this->guard()->login($user);
+
+        return $this->registered($request, $user)
+            ?: redirect($this->redirectPath());
     }
+
 
     /**
      * Create a new user instance after a valid registration.
@@ -65,6 +69,11 @@ class RegisterController extends Controller
      */
     public function registered(Request $request, $user)
     {
-        return response()->json($user, 200);
+        return response()->json(APIHelpers::createAPIResponse(
+            false,
+            Response::HTTP_OK,
+            "Registration successfull",
+            new UserResource($user)
+        ), Response::HTTP_OK);
     }
 }
