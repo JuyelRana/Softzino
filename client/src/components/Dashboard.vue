@@ -48,11 +48,11 @@ export default {
   },
   methods: {
     getUsers() {
-      axios.get('users').then((res) => {
+      axios.get('/users').then((res) => {
         if (res.data.success) {
           this.users = res.data.data;
         }
-        console.log(res);
+        // console.log(res);
       }).catch(err => {
         console.log(err);
       })

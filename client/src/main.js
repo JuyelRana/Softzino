@@ -7,20 +7,17 @@ import axios from 'axios'
 
 window.axios = axios;
 
-window.axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
-
 window.User = User;
 
 axios.defaults.baseURL = 'http://localhost/softzino/api/api';
-// axios.defaults.headers = {
-//     'Access-Control-Allow-Origin': "*",
-//     'Access-Control-Allow-Credentials': "true",
-//     'Access-Control-Allow-Methods': "GET,HEAD,OPTIONS,POST,PUT",
-//     'Access-Control-Allow-Headers': "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, app-key, app-secret",
-//     'app-key': "SOFTZINO",
-//     'app-secret': "base64:CXJ9JiHEr53jVenUWitEIhvZh4fiMEBTb9rjvVk2dS0="
-//
-// }
+axios.defaults.headers = {
+    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+    'Content-Type': "application/json",
+    'Accept': "application/json",
+    'app-key': "SOFTZINO",
+    'app-secret': "base64:CXJ9JiHEr53jVenUWitEIhvZh4fiMEBTb9rjvVk2dS0="
+
+}
 
 // createApp(App).use(router).mount('#app');
 createApp(App).use(router).mount('#app')
